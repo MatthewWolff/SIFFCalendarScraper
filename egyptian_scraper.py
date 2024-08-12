@@ -40,6 +40,7 @@ def scrape_page_calendar(url):
         meta = [m.strip() for m in movie.find('p', class_='meta').text.split("|")]
         title_element = movie.find('h3')
         daily_showings = _extract_showings(movie)
+        location = _extract_location(movie)
 
         for showing in daily_showings:
             all_daily_showings.append(MovieShowing(
@@ -47,6 +48,8 @@ def scrape_page_calendar(url):
                 year=meta[1],
                 director=meta[3],
                 description=_get_description(title_element),
+                link=_get_movie_link(title_element),
+                location=_extract_location(movie)[0],  # all showings will be at same location per movie
                 duration_minutes=parse_int(meta[2]),
                 showtime=showing
             ))
@@ -54,29 +57,43 @@ def scrape_page_calendar(url):
     return all_daily_showings
 
 
+def _get_movie_link(title_element) -> str:
+    return SIFF_ROOT + title_element.find('a').get('href')
+
+
 def _get_description(title_element) -> str:
-    title_page = SIFF_ROOT + title_element.find('a').get('href')
-    response = requests.get(title_page)
+    response = requests.get(_get_movie_link(title_element))
     soup = BeautifulSoup(response.content, 'html.parser')
     description_element = soup.find("div", class_="body-copy").find("p")
     description = "".join(description_element.strings)  # ignore HTML formatting elements
     return description
 
 
-def _extract_showings(movie) -> List[ShowTime]:
-    show_times = list()
+def __extract_metadata(metadata_function, movie) -> List:
+    metadata = list()
     for screening_time in movie.find('div', class_='button-group').find_all('a'):
         data_screening = screening_time.get('data-screening')
         if data_screening:
             data = json.loads(data_screening)
-            show_times.append(_extract_showing(data))
-    return show_times
+            metadata.append(metadata_function(data))
+    return metadata
 
 
-def _extract_showing(screening_data) -> ShowTime:
-    start_time = get_datetime_from_milliseconds(screening_data["Showtime"])
-    end_time = get_datetime_from_milliseconds(screening_data["ShowtimeEnd"])
-    return ShowTime(start_time, end_time)
+def _extract_showings(movie) -> List[ShowTime]:
+    def extract_showing(screening_data) -> ShowTime:
+        start_time = get_datetime_from_milliseconds(screening_data["Showtime"])
+        end_time = get_datetime_from_milliseconds(screening_data["ShowtimeEnd"])
+        return ShowTime(start_time, end_time)
+
+    return __extract_metadata(extract_showing, movie)
+
+
+def _extract_location(movie) -> List[str]:
+    def extract_location(data) -> str:
+        return (f"{data["VenueName"]}, {data["VenueAddress1"]}, "
+                f"{data["VenueCity"]}, {data["VenueState"]} {data["VenueZipCode"]}")
+
+    return __extract_metadata(extract_location, movie)
 
 
 if __name__ == '__main__':
