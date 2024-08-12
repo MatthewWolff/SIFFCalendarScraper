@@ -74,7 +74,7 @@ def update_calendar():
         if showing not in current_showings:
             event = _create_event(showing)
             service.events().insert(calendarId=calendar_id, body=event).execute()
-            logger.info(f"Event created: {event["summary"]}, {event["start"]["dateTime"]}")
+            logger.info(f"Event created: {event['summary']}, {event['start']['dateTime']}")
     else:
         logger.info("No new showings found")
 
