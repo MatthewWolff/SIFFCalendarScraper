@@ -40,15 +40,16 @@ def scrape_page_calendar(url):
         meta = [m.strip() for m in movie.find('p', class_='meta').text.split("|")]
         title_element = movie.find('h3')
         daily_showings = _extract_showings(movie)
+        locations = _extract_locations(movie)
 
-        for showing in daily_showings:
+        for showing, location in zip(daily_showings, locations):
             all_daily_showings.append(MovieShowing(
                 title=title_element.text.strip(),
                 year=meta[1],
                 director=meta[3],
                 description=_get_description(title_element),
                 link=_get_movie_link(title_element),
-                location=_extract_location(movie)[0],  # all showings will be at same location per movie
+                location=location,
                 duration_minutes=parse_int(meta[2]),
                 showtime=showing
             ))
@@ -87,7 +88,7 @@ def _extract_showings(movie) -> List[ShowTime]:
     return __extract_metadata(extract_showing, movie)
 
 
-def _extract_location(movie) -> List[str]:
+def _extract_locations(movie) -> List[str]:
     def extract_location(data) -> str:
         return (f"{data['VenueName']}, {data['VenueAddress1']}, "
                 f"{data['VenueCity']}, {data['VenueState']} {data['VenueZipCode']}")
