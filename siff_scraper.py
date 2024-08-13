@@ -1,24 +1,16 @@
 import json
-from enum import StrEnum
 from functools import cache
 from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 
-from model import ShowTime, MovieShowing
+from model import ShowTime, MovieShowing, Theatre
 from util import *
 
 SIFF_ROOT = "https://siff.net"
 
-logger = get_logger(__name__, level=logging.DEBUG)
-
-
-class Theatre(StrEnum):
-    SIFF_CINEMA_EGYPTIAN = "siff-cinema-egyptian"
-    SIFF_CINEMA_DOWNTOWN = "siff-cinema-downtown"
-    SIFF_CINEMA_UPTOWN = "siff-cinema-uptown"
-    SIFF_FILM_CENTER = "siff-film-center"
+logger = get_logger(__name__)
 
 
 def scrape_showings(theatre: Theatre = Theatre.SIFF_CINEMA_EGYPTIAN, interval_days=7) -> List[MovieShowing]:

@@ -6,8 +6,8 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-from egyptian_scraper import scrape_showings
-from model import MovieShowing, ShowTime
+from siff_scraper import scrape_showings
+from model import MovieShowing, ShowTime, Theatre
 from util import parse_int, get_logger
 
 credentials_file = 'credentials.json'
@@ -64,13 +64,13 @@ def _create_event(movie: MovieShowing):
     }
 
 
-def update_calendar():
+def update_calendar(theatre: Theatre = Theatre.SIFF_CINEMA_EGYPTIAN):
     api_credentials = _get_credentials()
     service = build('calendar', 'v3', credentials=api_credentials)
 
     events = service.events().list(calendarId=calendar_id).execute()
     current_showings = {_extract_movie(e) for e in events["items"]}
-    for showing in scrape_showings():
+    for showing in scrape_showings(theatre):
         if showing not in current_showings:
             event = _create_event(showing)
             service.events().insert(calendarId=calendar_id, body=event).execute()

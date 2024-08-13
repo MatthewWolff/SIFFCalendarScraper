@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from egyptian_calendar import update_calendar
+from siff_calendar_updater import update_calendar
+from model import Theatre
 
 if __name__ == '__main__':
-    update_calendar()
+    update_calendar(theatre=Theatre.SIFF_CINEMA_EGYPTIAN)
