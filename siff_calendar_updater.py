@@ -1,6 +1,7 @@
 import logging
 import os.path
 from datetime import datetime
+from typing import Dict
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -21,7 +22,7 @@ SCOPES = ['https://www.googleapis.com/auth/calendar']
 logger = get_logger(__name__)
 
 
-def _get_credentials():
+def _get_credentials() -> Credentials:
     logging.debug("Retrieving credentials")
     credentials = None
     # The file token.json stores the user's access and refresh tokens, and is
@@ -49,8 +50,7 @@ def _get_credentials():
 
 def _extract_movie(calendar_event) -> HashableMovieEvent:
     """
-    Extract a MovieEvent from the calendar event.
-    Note: MovieEvents and MovieShowings share a hashing function
+    Extract a MovieEvent from the calendar event
     """
     title = calendar_event["summary"].lstrip("Movie: ")[:-len("(YEAR)")].strip()
     year = str(parse_int(calendar_event["summary"][-len("(YEAR)"):]))
@@ -59,7 +59,7 @@ def _extract_movie(calendar_event) -> HashableMovieEvent:
     return HashableMovieEvent(title=title, year=year, showtime=ShowTime(showtime, None), location=location)
 
 
-def _create_event(movie: MovieShowing):
+def _create_event(movie: MovieShowing) -> Dict:
     return {
         "summary": f"Movie: {movie.title} ({movie.year})",
         "location": movie.location,
@@ -77,7 +77,7 @@ def update_calendar(theatre: Theatre = Theatre.SIFF_CINEMA_EGYPTIAN):
 
     logger.debug("Retrieving existing events from Google Calendar")
     events = service.events().list(calendarId=calendar_id).execute()
-    logger.debug(f"Found {len(events["items"])} existing events on calendar")
+    logger.info(f"Found {len(events["items"])} existing events on calendar")
     current_showings = {_extract_movie(e) for e in events["items"]}
     for showing in scrape_showings(theatre):
         if showing not in current_showings:
