@@ -75,8 +75,6 @@ def update_calendar():
             event = _create_event(showing)
             service.events().insert(calendarId=calendar_id, body=event).execute()
             logger.info(f"Event created: {event['summary']}, {event['start']['dateTime']}")
-    else:
-        logger.info("No new showings found")
 
 
 if __name__ == '__main__':
