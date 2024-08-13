@@ -56,6 +56,7 @@ def scrape_page_calendar(url):
                 title=title_element.text.strip(),
                 year=meta[1],
                 director=meta[3],
+                country=meta[0],
                 description=_get_description(_get_movie_link(title_element)),
                 link=_get_movie_link(title_element),
                 location=location,

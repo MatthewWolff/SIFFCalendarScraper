@@ -18,9 +18,30 @@ class ShowTime:
 
 
 @dataclass
-class MovieShowing:
+class HashableMovieEvent:
+    title: str
+    year: str
+    location: str
+    showtime: ShowTime
+
+    def __make_id_string(self):
+        return f"{self.title} {self.year} {self.showtime.start_time.isoformat(timespec="seconds")} {self.location}"
+
+    def __eq__(self, other):
+        return other and self.__make_id_string() == other.__make_id_string()
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self.__make_id_string())
+
+
+@dataclass
+class MovieShowing(HashableMovieEvent):
     title: str
     director: str
+    country: str
     year: str
     description: str
     link: str
@@ -28,15 +49,6 @@ class MovieShowing:
     duration_minutes: int
     showtime: ShowTime
 
-    # define hashing
-    def __eq__(self, other):
-        return (other and
-                f"{self.title} ({self.year})" == f"{other.title} ({other.year})" and
-                self.showtime.start_time.isoformat(timespec="seconds") ==
-                other.showtime.start_time.isoformat(timespec="seconds"))
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __hash__(self):
-        return hash((f"{self.title} ({self.year})", self.showtime.start_time.isoformat(timespec="seconds")))
+    __hash__ = HashableMovieEvent.__hash__
+    __eq__ = HashableMovieEvent.__eq__
+    __ne__ = HashableMovieEvent.__ne__
