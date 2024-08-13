@@ -33,3 +33,11 @@ def get_date_delta(days_from_now: int) -> str:
 def get_datetime_from_milliseconds(data_time):
     epoch_seconds = parse_int(data_time) / MILLISEC_PER_SEC
     return datetime.fromtimestamp(epoch_seconds, tz=PACIFIC_TIMEZONE)
+
+
+def is_parseable_as_int(string) -> bool:
+    try:
+        int(string)
+        return True
+    except ValueError:
+        return False
