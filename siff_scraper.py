@@ -52,13 +52,14 @@ def scrape_page_calendar(url):
                             reference_showing=daily_showings[0] if daily_showings else None)
 
         for showing, location in zip(daily_showings, locations):
+            movie_link = _get_movie_link(title_element)
             all_daily_showings.append(MovieShowing(
                 title=title_element.text.strip(),
                 year=meta[1],
                 director=meta[3],
                 country=meta[0],
-                description=_get_description(_get_movie_link(title_element)),
-                link=_get_movie_link(title_element),
+                description=_get_description(movie_link),
+                link=movie_link,
                 location=location,
                 duration_minutes=parse_int(meta[2]),
                 showtime=showing
@@ -75,14 +76,14 @@ def get_metadata(meta_source, reference_showing):
     :return: a list of metadata
     """
     meta = [m.strip() for m in meta_source.find('p', class_='meta').text.split("|")]
-    logging.debug("Extracted metadata: %s", meta)
+    logging.debug(f"Extracted metadata: {meta}")
     if len(meta) == 3 and reference_showing:
         logging.warning(f"Correcting incomplete metadata ({meta})")
         meta = [meta[0],  # country
                 meta[1],  # year
                 str((reference_showing.end_time - reference_showing.start_time).seconds // 60),  # duration
                 meta[2]]  # director
-        logging.warning(f"Corrected metadata: {meta}", )
+        logging.warning(f"Corrected metadata: {meta}")
     return meta
 
 
