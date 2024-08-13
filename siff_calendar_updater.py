@@ -8,7 +8,8 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-from model import MovieShowing, ShowTime, Theatre, HashableMovieEvent
+from constants import SIFFTheatre
+from model import MovieShowing, ShowTime, HashableMovieEvent
 from siff_scraper import scrape_showings
 from util import parse_int, get_logger
 
@@ -73,7 +74,7 @@ def _create_event(movie: MovieShowing) -> Dict:
     }
 
 
-def update_calendar(calendar_id, theatre: Theatre = Theatre.SIFF_CINEMA_EGYPTIAN):
+def update_calendar(calendar_id, theatre: SIFFTheatre = SIFFTheatre.EGYPTIAN):
     api_credentials = _get_credentials()
     service = build('calendar', 'v3', credentials=api_credentials)
 

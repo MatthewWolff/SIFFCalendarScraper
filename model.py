@@ -1,14 +1,5 @@
 from dataclasses import dataclass
 from datetime import datetime
-from enum import StrEnum
-
-
-# the string value must match the one used in the URL
-class Theatre(StrEnum):
-    SIFF_CINEMA_EGYPTIAN = "siff-cinema-egyptian"
-    SIFF_CINEMA_DOWNTOWN = "siff-cinema-downtown"
-    SIFF_CINEMA_UPTOWN = "siff-cinema-uptown"
-    SIFF_FILM_CENTER = "siff-film-center"
 
 
 @dataclass
