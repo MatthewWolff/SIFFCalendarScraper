@@ -80,10 +80,15 @@ def _get_metadata(meta_source, reference_showing):
     logging.debug(f"Extracted metadata: {meta}")
     if len(meta) == 3 and reference_showing:
         logging.warning(f"Correcting incomplete metadata ({meta})")
-        meta = [meta[0],  # country
-                meta[1],  # year
-                str((reference_showing.end_time - reference_showing.start_time).seconds // 60),  # duration
-                meta[2]]  # director
+        if is_parseable_as_int(meta[0]):
+            logger.warning("Detected missing country - filling with 'Unknown'")
+            meta = ["Unknown Country"] + meta
+        else:
+            logger.warning("Assuming missing duration...")
+            meta = [meta[0],  # country
+                    meta[1],  # year
+                    str((reference_showing.end_time - reference_showing.start_time).seconds // 60),  # duration
+                    meta[2]]  # director
         logging.warning(f"Corrected metadata: {meta}")
     return meta
 
