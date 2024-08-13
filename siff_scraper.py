@@ -48,8 +48,8 @@ def scrape_page_calendar(url):
         title_element = movie.find('h3')
         daily_showings = _extract_showings(movie)
         locations = _extract_locations(movie)
-        meta = get_metadata(meta_source=movie.find('div', class_='small-copy'),
-                            reference_showing=daily_showings[0] if daily_showings else None)
+        meta = _get_metadata(meta_source=movie.find('div', class_='small-copy'),
+                             reference_showing=daily_showings[0] if daily_showings else None)
 
         for showing, location in zip(daily_showings, locations):
             movie_link = _get_movie_link(title_element)
@@ -68,7 +68,7 @@ def scrape_page_calendar(url):
     return all_daily_showings
 
 
-def get_metadata(meta_source, reference_showing):
+def _get_metadata(meta_source, reference_showing):
     """
     Some movies have partial metadata (missing duration), so we correct it here
     :param meta_source: the element containing metadata
