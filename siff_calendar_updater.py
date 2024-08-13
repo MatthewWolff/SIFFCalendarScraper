@@ -14,7 +14,6 @@ from util import parse_int, get_logger
 
 credentials_file = 'credentials.json'
 token_file = 'token.json'
-calendar_id = 'd9ad77d20a018d11c20560b1ceb55b92c5b64ee10b322ac2c7da39e178aa17fc@group.calendar.google.com'
 
 # Scopes required by the Google Calendar API
 SCOPES = ['https://www.googleapis.com/auth/calendar']
@@ -74,7 +73,7 @@ def _create_event(movie: MovieShowing) -> Dict:
     }
 
 
-def update_calendar(theatre: Theatre = Theatre.SIFF_CINEMA_EGYPTIAN):
+def update_calendar(calendar_id, theatre: Theatre = Theatre.SIFF_CINEMA_EGYPTIAN):
     api_credentials = _get_credentials()
     service = build('calendar', 'v3', credentials=api_credentials)
 
@@ -90,4 +89,5 @@ def update_calendar(theatre: Theatre = Theatre.SIFF_CINEMA_EGYPTIAN):
 
 
 if __name__ == '__main__':
-    update_calendar()
+    cid = 'd9ad77d20a018d11c20560b1ceb55b92c5b64ee10b322ac2c7da39e178aa17fc@group.calendar.google.com'
+    update_calendar(cid)
