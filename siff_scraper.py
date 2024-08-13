@@ -5,7 +5,8 @@ from typing import List
 import requests
 from bs4 import BeautifulSoup
 
-from model import ShowTime, MovieShowing, Theatre
+from constants import SIFFTheatre
+from model import ShowTime, MovieShowing
 from util import *
 
 SIFF_ROOT = "https://siff.net"
@@ -13,8 +14,8 @@ SIFF_ROOT = "https://siff.net"
 logger = get_logger(__name__)
 
 
-def scrape_showings(theatre: Theatre = Theatre.SIFF_CINEMA_EGYPTIAN, interval_days=7) -> List[MovieShowing]:
-    assert theatre in Theatre
+def scrape_showings(theatre: SIFFTheatre = SIFFTheatre.EGYPTIAN, interval_days=7) -> List[MovieShowing]:
+    assert theatre in SIFFTheatre
     assert interval_days > 0
 
     movies = list()
@@ -135,4 +136,4 @@ def _extract_locations(movie) -> List[str]:
 
 
 if __name__ == '__main__':
-    print(*scrape_showings(Theatre.SIFF_CINEMA_UPTOWN, interval_days=7), sep="\n")
+    print(*scrape_showings(SIFFTheatre.UPTOWN, interval_days=7), sep="\n")

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from constants import SIFFTheatre, GoogleCalendar
 from siff_calendar_updater import update_calendar
-from model import Theatre
-
-calendar_id = 'd9ad77d20a018d11c20560b1ceb55b92c5b64ee10b322ac2c7da39e178aa17fc@group.calendar.google.com'
 
 if __name__ == '__main__':
-    update_calendar(calendar_id, theatre=Theatre.SIFF_CINEMA_EGYPTIAN)
+    for calendar_id, theatre in zip(GoogleCalendar, SIFFTheatre):
+        update_calendar(calendar_id, theatre=theatre)
