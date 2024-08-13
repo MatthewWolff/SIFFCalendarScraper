@@ -67,7 +67,10 @@ def _create_event(movie: MovieShowing) -> Dict:
         "start": {"dateTime": movie.showtime.start_time.isoformat(timespec="seconds"),
                   'timeZone': 'America/Los_Angeles'},
         "end": {"dateTime": movie.showtime.end_time.isoformat(timespec="seconds"),
-                'timeZone': 'America/Los_Angeles'}
+                'timeZone': 'America/Los_Angeles'},
+        "visibility": "public",
+        "transparency": "transparent",  # non-blocking on calendar
+        "reminders": {"useDefault": False}  # don't send reminders
     }
 
 
@@ -82,8 +85,8 @@ def update_calendar(theatre: Theatre = Theatre.SIFF_CINEMA_EGYPTIAN):
     for showing in scrape_showings(theatre):
         if showing not in current_showings:
             event = _create_event(showing)
-            service.events().insert(calendarId=calendar_id, body=event).execute()
-            logger.info(f"Event created: {event['summary']}, {event['start']['dateTime']}")
+            response = service.events().insert(calendarId=calendar_id, body=event).execute()
+            logger.info(f"Event created: {event['summary']}, {event['start']['dateTime']} - {response.get('htmlLink')}")
 
 
 if __name__ == '__main__':
