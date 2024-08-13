@@ -79,7 +79,7 @@ def update_calendar(calendar_id, theatre: Theatre = Theatre.SIFF_CINEMA_EGYPTIAN
 
     logger.debug("Retrieving existing events from Google Calendar")
     events = service.events().list(calendarId=calendar_id).execute()
-    logger.info(f"Found {len(events["items"])} existing events on calendar")
+    logger.info(f"Found {len(events['items'])} existing events on calendar")
     current_showings = {_extract_movie(e) for e in events["items"]}
     for showing in scrape_showings(theatre):
         if showing not in current_showings:
