@@ -1,7 +1,7 @@
 # SIFFCalendarScraper
 A little web scraping project for creating a calendar that will be populated with SIFF movies, specifically the Egyptian
 
-Join the calendar: https://calendar.google.com/calendar/u/0?cid=ZDlhZDc3ZDIwYTAxOGQxMWMyMDU2MGIxY2ViNTViOTJjNWI2NGVlMTBiMzIyYWMyYzdkYTM5ZTE3OGFhMTdmY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t
+Join a calendar: https://linktr.ee/SIFFCalendars
 
 This script can be configured to scrape events from any of the SIFF theatres—this can be done
 by updating the `theatre` parameter with any of the available enum values
