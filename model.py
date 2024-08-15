@@ -15,9 +15,6 @@ class HashableMovieEvent:
     location: str
     showtime: ShowTime
 
-    def make_id_string(self):
-        return self.__make_id_string()
-
     def __make_id_string(self):
         return f"{self.title} {self.year} {self.showtime.start_time.isoformat(timespec='seconds')} {self.location}"
 
