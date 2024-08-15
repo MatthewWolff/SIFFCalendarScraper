@@ -4,6 +4,8 @@ from datetime import datetime, timedelta
 
 import pytz
 
+from constants import GoogleCalendar
+
 MILLISEC_PER_SEC = 1000
 PACIFIC_TIMEZONE = pytz.timezone('America/Los_Angeles')
 
@@ -14,6 +16,7 @@ def get_logger(filename, level=logging.INFO):
                         filename="update_calendar.log",
                         level=level,
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    logger.addHandler(logging.StreamHandler())
     return logger
 
 
@@ -41,3 +44,7 @@ def is_parseable_as_int(string) -> bool:
         return True
     except ValueError:
         return False
+
+
+def get_calendar_name(calendar: GoogleCalendar) -> str:
+    return next(name for name, value in vars(GoogleCalendar).items() if value == calendar.value)

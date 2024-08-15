@@ -20,32 +20,32 @@ def scrape_showings(theatre: SIFFTheatre = SIFFTheatre.EGYPTIAN, interval_days=7
 
     movies = list()
     for i in range(interval_days):
-        dated_url = f"{SIFF_ROOT}/cinema/cinema-venues/{theatre.value}?day={i}"
+        dated_url = f"{SIFF_ROOT}/cinema/cinema-venues/{theatre}?day={i}"
         showings = scrape_page_calendar(dated_url)
         if not showings:
-            logger.warning(f"No movie listing found for provided date ({get_date_delta(i)}) at {theatre.value}")
+            logger.warning(f"No movie listing found for provided date ({get_date_delta(i)}) at {theatre}")
         movies.extend(showings)
 
     movies_playing = ", ".join(set(f"{m.title} ({m.year})" for m in movies))
-    logger.info(f"Found {len(movies)} showings for the week of {get_date_delta(0)}")
-    logger.info(f"Movies currently playing are: {movies_playing}")
+    logger.info(f"Found {len(movies)} showings for the week of {get_date_delta(0)} for {theatre}")
+    logger.info(f"Movies currently playing at {theatre}: {movies_playing}")
     return movies
 
 
 def scrape_page_calendar(url):
-    logging.debug(f"Scraping {url}")
+    logger.debug(f"Scraping {url}")
     response = requests.get(url)
     soup = BeautifulSoup(response.content, 'html.parser')
-    logging.debug("Successfully retrieved soup content")
+    logger.debug("Successfully retrieved soup content")
 
     all_daily_showings = list()
     movie_listings = soup.find('div', class_='listing')
     if not movie_listings:
-        logging.debug("No valid screenings found")
+        logger.debug("No valid screenings found")
         return all_daily_showings
 
     for movie in movie_listings.find_all("div", class_="item"):
-        logging.debug(f"Movie element: {movie}")
+        logger.debug(f"Movie element: {movie}")
         title_element = movie.find('h3')
         daily_showings = _extract_showings(movie)
         locations = _extract_locations(movie)
@@ -77,9 +77,9 @@ def _get_metadata(meta_source, reference_showing):
     :return: a list of metadata
     """
     meta = [m.strip() for m in meta_source.find('p', class_='meta').text.split("|")]
-    logging.debug(f"Extracted metadata: {meta}")
+    logger.debug(f"Extracted metadata: {meta}")
     if len(meta) != 4:
-        logging.warning(f"Attempting to correct incomplete metadata ({meta})")
+        logger.warning(f"Attempting to correct incomplete metadata ({meta})")
         fallback_year = f"{reference_showing.start_time.year}*"
         if len(meta) == 1:
             logger.warning(f"Missing most of metadata...")
@@ -99,12 +99,12 @@ def _get_metadata(meta_source, reference_showing):
                 logger.warning("Assuming missing duration...")
                 meta = [meta[0],  # country
                         meta[1],  # year
-                        str((reference_showing.end_time - reference_showing.start_time).seconds // 60),  # duration
+                        str((reference_showing.end_time - reference_showing.start_time).seconds // 60) + " min.",
                         meta[2]]  # director
         else:
             logger.warning("... Missing too much of metadata")
             meta = ["Unknown Country", fallback_year, "Unknown Duration", "Unknown Director"]
-        logging.warning(f"Corrected metadata: {meta}")
+        logger.warning(f"Corrected metadata: {meta}")
     return meta
 
 
@@ -117,7 +117,7 @@ def _get_description(title_page_url) -> str:
     """
     Extracts the movie description by following the link to the movie page. Cached to avoid repeated requests
     """
-    logging.debug(f"Retrieving description from {title_page_url}")
+    logger.debug(f"Retrieving description from {title_page_url}")
     response = requests.get(title_page_url)
     soup = BeautifulSoup(response.content, 'html.parser')
     description_element = soup.find("div", class_="body-copy").find("p")
