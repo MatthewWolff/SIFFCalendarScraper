@@ -13,8 +13,8 @@ from model import MovieShowing, ShowTime, HashableMovieEvent
 from siff_scraper import scrape_showings
 from util import parse_int, get_logger
 
-credentials_file = 'credentials.json'
-token_file = 'token.json'
+CREDENTIALS_FILE = 'credentials.json'
+TOKEN_FILE = 'token.json'
 
 # Scopes required by the Google Calendar API
 SCOPES = ['https://www.googleapis.com/auth/calendar']
@@ -28,22 +28,22 @@ def _get_credentials() -> Credentials:
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists(token_file):
+    if os.path.exists(TOKEN_FILE):
         logging.debug("Found existing token file")
-        credentials = Credentials.from_authorized_user_file(token_file, SCOPES)
+        credentials = Credentials.from_authorized_user_file(TOKEN_FILE, SCOPES)
         # If there are no (valid) credentials available, let the user log in.
 
     if not (credentials and credentials.valid):
         if credentials and credentials.expired and credentials.refresh_token:
-            logging.debug("Refreshing expired token")
+            logging.warning("Refreshing expired token")
             credentials.refresh(Request())
         else:
-            logging.warning("New credentials required")
-            flow = InstalledAppFlow.from_client_secrets_file(credentials_file, SCOPES)
+            logging.critical("New credentials required")
+            flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
             credentials = flow.run_local_server(port=0)
 
         # Save the credentials for the next run
-        with open(token_file, "w") as token:
+        with open(TOKEN_FILE, "w") as token:
             token.write(credentials.to_json())
     return credentials
 
@@ -63,7 +63,8 @@ def _create_event(movie: MovieShowing) -> Dict:
     return {
         "summary": f"Movie: {movie.title} ({movie.year})",
         "location": movie.location,
-        "description": f"Director: {movie.director} - {movie.country}\n{movie.description}\n---\n{movie.link}",
+        "description": f"Director: {movie.director} - {movie.country}\n{movie.description}\n---\n{movie.link}"
+                       f"{'\n\n* = year was unspecified, assuming this year' if '*' in movie.year else ''}",
         "start": {"dateTime": movie.showtime.start_time.isoformat(timespec="seconds"),
                   'timeZone': 'America/Los_Angeles'},
         "end": {"dateTime": movie.showtime.end_time.isoformat(timespec="seconds"),
