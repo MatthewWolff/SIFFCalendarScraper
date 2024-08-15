@@ -64,7 +64,7 @@ def _create_event(movie: MovieShowing) -> Dict:
         "summary": f"Movie: {movie.title} ({movie.year})",
         "location": movie.location,
         "description": f"Director: {movie.director} - {movie.country}\n{movie.description}\n---\n{movie.link}"
-                       f"{'\n\n* = year was unspecified, assuming this year' if '*' in movie.year else ''}",
+                       "\n\n* = year was unspecified, assuming this year" if "*" in movie.year else "",
         "start": {"dateTime": movie.showtime.start_time.isoformat(timespec="seconds"),
                   'timeZone': 'America/Los_Angeles'},
         "end": {"dateTime": movie.showtime.end_time.isoformat(timespec="seconds"),
