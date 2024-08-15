@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import os
 
 from constants import SIFFTheatre, GoogleCalendar
 from siff_calendar_updater import update_calendar
 
 if __name__ == '__main__':
+    # change path to script directory for relative paths (i.e., for credential files)
+    abspath = os.path.abspath(__file__)
+    os.chdir(os.path.dirname(abspath))
+
     for calendar_id, theatre in zip(GoogleCalendar, SIFFTheatre):
         update_calendar(calendar_id, theatre=theatre)
