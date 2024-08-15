@@ -36,6 +36,10 @@ class TestUtilMethods(unittest.TestCase):
         self.assertFalse(is_parseable_as_int(""))
         self.assertFalse(is_parseable_as_int("123.45"))
 
+    def test_get_calendar_name_with_valid_input(self):
+        # Test with each value of the GoogleCalendar enum
+        self.assertEqual(get_calendar_name(GoogleCalendar.SIFF_CINEMA_UPTOWN), "SIFF_CINEMA_UPTOWN")
+        self.assertEqual(get_calendar_name(GoogleCalendar.SIFF_CINEMA_EGYPTIAN), "SIFF_CINEMA_EGYPTIAN")
 
 if __name__ == '__main__':
     unittest.main()

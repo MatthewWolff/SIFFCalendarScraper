@@ -1,14 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
+from concurrent.futures import ThreadPoolExecutor
 
 from constants import SIFFTheatre, GoogleCalendar
 from siff_calendar_updater import update_calendar
+
+
+def update_single_calendar(calendar_id: GoogleCalendar, theatre: SIFFTheatre):
+    update_calendar(calendar_id, theatre=theatre)
+
 
 if __name__ == '__main__':
     # change path to script directory for relative paths (i.e., for credential files)
     abspath = os.path.abspath(__file__)
     os.chdir(os.path.dirname(abspath))
 
-    for calendar_id, theatre in zip(GoogleCalendar, SIFFTheatre):
-        update_calendar(calendar_id, theatre=theatre)
+    # process calendars in parallel
+    with ThreadPoolExecutor() as executor:
+        futures = [executor.submit(update_single_calendar, cid, t) for cid, t in zip(GoogleCalendar, SIFFTheatre)]
+        for future in futures:
+            try:
+                future.result()
+            except Exception as e:
+                print(f"An error occurred: {e}")
