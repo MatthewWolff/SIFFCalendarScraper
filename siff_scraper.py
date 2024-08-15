@@ -71,24 +71,39 @@ def scrape_page_calendar(url):
 
 def _get_metadata(meta_source, reference_showing):
     """
-    Some movies have partial metadata (missing duration), so we correct it here
+    Some movies have partial metadata, so we correct it here
     :param meta_source: the element containing metadata
     :param reference_showing: an extract showing to reference for duration
     :return: a list of metadata
     """
     meta = [m.strip() for m in meta_source.find('p', class_='meta').text.split("|")]
     logging.debug(f"Extracted metadata: {meta}")
-    if len(meta) == 3 and reference_showing:
-        logging.warning(f"Correcting incomplete metadata ({meta})")
-        if is_parseable_as_int(meta[0]):
-            logger.warning("Detected missing country - filling with 'Unknown'")
-            meta = ["Unknown Country"] + meta
+    if len(meta) != 4:
+        logging.warning(f"Attempting to correct incomplete metadata ({meta})")
+        fallback_year = f"{reference_showing.start_time.year}*"
+        if len(meta) == 1:
+            logger.warning(f"Missing most of metadata...")
+            if "min." in meta[0]:
+                logger.warning("Assuming duration, filling other fields with unknown")
+                meta = ["Unknown Country", fallback_year, meta[0], "Unknown Director"]
+            elif is_parseable_as_int(meta[0]):
+                logger.warning("Detected year - filling other fields with unknown")
+                meta = ["Unknown Country", meta[0], "Unknown Duration", "Unknown Director"]
+            else:
+                meta = ["Unknown Country", fallback_year, "Unknown Duration", "Unknown Director"]
+        elif len(meta) == 3:
+            if is_parseable_as_int(meta[0]):
+                logger.warning("Detected missing country - filling with unknown")
+                meta = ["Unknown Country"] + meta
+            else:
+                logger.warning("Assuming missing duration...")
+                meta = [meta[0],  # country
+                        meta[1],  # year
+                        str((reference_showing.end_time - reference_showing.start_time).seconds // 60),  # duration
+                        meta[2]]  # director
         else:
-            logger.warning("Assuming missing duration...")
-            meta = [meta[0],  # country
-                    meta[1],  # year
-                    str((reference_showing.end_time - reference_showing.start_time).seconds // 60),  # duration
-                    meta[2]]  # director
+            logger.warning("... Missing too much of metadata")
+            meta = ["Unknown Country", fallback_year, "Unknown Duration", "Unknown Director"]
         logging.warning(f"Corrected metadata: {meta}")
     return meta
 
