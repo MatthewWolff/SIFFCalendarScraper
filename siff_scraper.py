@@ -32,7 +32,7 @@ def scrape_showings(theatre: SIFFTheatre = SIFFTheatre.EGYPTIAN, interval_days=7
     return movies
 
 
-def scrape_page_calendar(url):
+def scrape_page_calendar(url) -> List[MovieShowing]:
     logger.debug(f"Scraping {url}")
     response = requests.get(url)
     soup = BeautifulSoup(response.content, 'html.parser')
@@ -51,6 +51,7 @@ def scrape_page_calendar(url):
         locations = _extract_locations(movie)
         meta = _get_metadata(meta_source=movie.find('div', class_='small-copy'),
                              reference_showing=daily_showings[0] if daily_showings else None)
+        print(daily_showings[0])
 
         for showing, location in zip(daily_showings, locations):
             movie_link = _get_movie_link(title_element)
@@ -69,7 +70,7 @@ def scrape_page_calendar(url):
     return all_daily_showings
 
 
-def _get_metadata(meta_source, reference_showing):
+def _get_metadata(meta_source, reference_showing) -> List[str]:
     """
     Some movies have partial metadata, so we correct it here
     :param meta_source: the element containing metadata
@@ -156,4 +157,4 @@ def _extract_locations(movie) -> List[str]:
 
 
 if __name__ == '__main__':
-    print(*scrape_showings(SIFFTheatre.UPTOWN, interval_days=7), sep="\n")
+    print(*scrape_showings(SIFFTheatre.EGYPTIAN, interval_days=7), sep="\n")
