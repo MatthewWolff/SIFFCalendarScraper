@@ -34,4 +34,4 @@ affiliated with SIFF)
    ```cronexp
    0 8,17 * * * /home/matthew/SIFFCalendarScraper/runner >> calendar.error.log 2>&1
    ```
-   Because I'm running this on a raspberry-pi, I created a separate branch for pi-specific changes: [raspberry-pi](https://github.com/MatthewWolff/SIFFCalendarScraper/tree/raspberry-pi) 
+   Because I'm running this on a raspberry-pi, I created a separate branch for pi-specific changes. Here's the diff: [raspberry-pi](https://github.com/MatthewWolff/SIFFCalendarScraper/compare/main...raspberry-pi) 
