@@ -51,7 +51,6 @@ def get_calendar_name(calendar: GoogleCalendar) -> str:
 
 def read_html_files(directory):
     html_files = {}
-    print()
 
     for root, dirs, files in os.walk(directory):
         for file in files:

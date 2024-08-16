@@ -51,7 +51,6 @@ def scrape_page_calendar(url) -> List[MovieShowing]:
         locations = _extract_locations(movie)
         meta = _get_metadata(meta_source=movie.find('div', class_='small-copy'),
                              reference_showing=daily_showings[0] if daily_showings else None)
-        print(daily_showings[0])
 
         for showing, location in zip(daily_showings, locations):
             movie_link = _get_movie_link(title_element)
