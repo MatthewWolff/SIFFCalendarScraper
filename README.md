@@ -14,7 +14,6 @@ affiliated with SIFF)
     * Once you have your API credentials, create a file in the workspace root called `credentials.json`
     * You'll then need to update the [`constants.py`](./constants.py) so that the `GoogleCalendar` enum points at your
       calendar(s)
-      You can then run the following comma
 3. Install dependencies
     ```bash
     make install
