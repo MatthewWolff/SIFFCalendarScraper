@@ -28,9 +28,10 @@ affiliated with SIFF)
    ```
 4. Run it! It will print logs to standard out as well as to a log file
    ```bash
-   ./runner
+   ./runner  # note: if you're using a venv, you'll need to update the runner's shebang
    ```
-5. Set up a crontab with `crontab -e`. I added this line: 
+5. Set up a crontab with `crontab -e`. I added this line so that it runs twice a day: 
    ```cronexp
    0 8,17 * * * /home/matthew/SIFFCalendarScraper/runner >> calendar.error.log 2>&1
    ```
+   Because I'm running this on a raspberry-pi, I created a separate branch for pi-specific changes: [raspberry-pi](https://github.com/MatthewWolff/SIFFCalendarScraper/tree/raspberry-pi) 
