@@ -16,7 +16,8 @@ class HashableMovieEvent:
     showtime: ShowTime
 
     def __make_id_string(self):
-        return f"{self.title} {self.year} {self.showtime.start_time.isoformat(timespec='seconds')} {self.location}"
+        stripped_datetime = self.showtime.start_time.replace(tzinfo=None)
+        return f"{self.title} {self.year} {stripped_datetime.isoformat(timespec='seconds')} {self.location}"
 
     def __eq__(self, other):
         return other and self.__make_id_string() == other.__make_id_string()
