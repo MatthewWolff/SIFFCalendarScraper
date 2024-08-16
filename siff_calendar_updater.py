@@ -1,4 +1,3 @@
-import json
 import os.path
 import re
 from datetime import datetime
@@ -95,8 +94,9 @@ def get_calendar_events(service, calendar_id: GoogleCalendar, future_only=False)
     logger.debug(f"Filtering calendar events for future: {future_only}")
 
     # assume no showings are from before January 1st, 1970
-    time_filter = (datetime.now() if future_only else datetime.fromtimestamp(int())).isoformat(timespec="seconds")
-    filtered_events = [event for event in events if event["start"]["dateTime"] > time_filter]
+    filter_date = (datetime.today() if future_only else datetime.fromtimestamp(int())).date()
+    filter_datetime = datetime(filter_date.year, filter_date.month, filter_date.day).isoformat(timespec="seconds")
+    filtered_events = [event for event in events if event["start"]["dateTime"] > filter_datetime]
     if future_only:
         logger.info(f"Found {len(filtered_events)} future events on calendar - {get_calendar_name(calendar_id)}")
     return filtered_events
