@@ -3,10 +3,9 @@ from functools import cache
 from typing import List
 
 import requests
-from bs4 import BeautifulSoup
 
 from constants import SIFFTheatre
-from model import ShowTime, MovieShowing
+from model import MovieShowing
 from util import *
 
 SIFF_ROOT = "https://siff.net"
@@ -120,8 +119,8 @@ def _get_description(title_page_url) -> str:
     logger.debug(f"Retrieving description from {title_page_url}")
     response = requests.get(title_page_url)
     soup = BeautifulSoup(response.content, 'html.parser')
-    description_element = soup.find("div", class_="body-copy").find("p")
-    description = "".join(description_element.strings)  # ignore HTML formatting elements
+    description_elements = soup.find("div", class_="body-copy").find_all("p")
+    description = "\n\n".join("".join(e.strings) for e in description_elements)  # ignore HTML formatting elements
     return description
 
 
