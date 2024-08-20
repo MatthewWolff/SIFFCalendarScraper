@@ -3,9 +3,9 @@
 import os
 from concurrent.futures import ThreadPoolExecutor
 
-from constants import SIFFTheatre, GoogleCalendar
-from siff_calendar_updater import update_calendar
-from util import get_logger
+from src.constants import SIFFTheatre, GoogleCalendar
+from src.siff_calendar_updater import update_calendar
+from src.util import get_logger
 
 
 def update_single_calendar(calendar_id: GoogleCalendar, theatre: SIFFTheatre):

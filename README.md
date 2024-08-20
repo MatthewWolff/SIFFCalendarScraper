@@ -12,7 +12,7 @@ affiliated with SIFF)
       API: https://developers.google.com/calendar/api/quickstart/python
 2. Update the workspace + constants
     * Once you have your API credentials, create a file in the workspace root called `credentials.json`
-    * You'll then need to update the [`constants.py`](./constants.py) so that the `GoogleCalendar` enum points at your
+    * You'll then need to update the [`constants.py`](src/constants.py) so that the `GoogleCalendar` enum points at your
       calendar(s)
 3. Install dependencies
     ```bash

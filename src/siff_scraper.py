@@ -4,9 +4,9 @@ from typing import List
 
 import requests
 
-from constants import SIFFTheatre
-from model import MovieShowing
-from util import *
+from src.constants import SIFFTheatre
+from src.model import MovieShowing
+from src.util import *
 
 SIFF_ROOT = "https://siff.net"
 
