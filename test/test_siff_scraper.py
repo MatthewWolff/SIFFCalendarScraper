@@ -2,10 +2,10 @@ import os
 import unittest
 from datetime import datetime
 
-from constants import PACIFIC_TIMEZONE
-from model import ShowTime
-from siff_scraper import _get_metadata, _extract_showings, _extract_locations
-from util import read_html_files, assert_equal_showtime
+from src.constants import PACIFIC_TIMEZONE
+from src.model import ShowTime
+from src.siff_scraper import _get_metadata, _extract_showings, _extract_locations
+from src.util import read_html_files, assert_equal_showtime
 
 
 class TestSIFFScraper(unittest.TestCase):

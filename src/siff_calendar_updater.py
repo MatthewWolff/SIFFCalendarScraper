@@ -8,10 +8,10 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-from constants import SIFFTheatre, GoogleCalendar
-from model import MovieShowing, ShowTime, HashableMovieEvent
-from siff_scraper import scrape_showings
-from util import get_logger, get_calendar_name
+from src.constants import SIFFTheatre, GoogleCalendar
+from src.model import MovieShowing, ShowTime, HashableMovieEvent
+from src.siff_scraper import scrape_showings
+from src.util import get_logger, get_calendar_name
 
 CREDENTIALS_FILE = 'credentials.json'
 TOKEN_FILE = 'token.json'

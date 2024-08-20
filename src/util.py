@@ -5,14 +5,14 @@ from datetime import datetime, timedelta
 
 from bs4 import BeautifulSoup
 
-from constants import GoogleCalendar, PACIFIC_TIMEZONE, MILLISEC_PER_SEC
-from model import ShowTime
+from src.constants import GoogleCalendar, PACIFIC_TIMEZONE, MILLISEC_PER_SEC
+from src.model import ShowTime
 
 
 def get_logger(filename, level=logging.INFO):
     logger = logging.getLogger(filename)
     logging.basicConfig(encoding='utf-8',
-                        filename="update_calendar.log",
+                        filename="../update_calendar.log",
                         level=level,
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     logger.addHandler(logging.StreamHandler())
