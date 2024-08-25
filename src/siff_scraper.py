@@ -76,6 +76,7 @@ def _get_metadata(meta_source, reference_showing) -> List[str]:
     :return: a list of metadata
     """
     meta = [m.strip() for m in meta_source.find('p', class_='meta').text.split("|")]
+    reference_showing_duration = str((reference_showing.end_time - reference_showing.start_time).seconds // 60) + " min."
     logger.debug(f"Extracted metadata: {meta}")
     if len(meta) != 4:
         logger.warning(f"Attempting to correct incomplete metadata ({meta})")
@@ -87,9 +88,9 @@ def _get_metadata(meta_source, reference_showing) -> List[str]:
                 meta = ["Unknown Country", fallback_year, meta[0], "Unknown Director"]
             elif is_parseable_as_int(meta[0]):
                 logger.warning("Detected year - filling other fields with unknown")
-                meta = ["Unknown Country", meta[0], "Unknown Duration", "Unknown Director"]
+                meta = ["Unknown Country", meta[0], reference_showing_duration, "Unknown Director"]
             else:
-                meta = ["Unknown Country", fallback_year, "Unknown Duration", "Unknown Director"]
+                meta = ["Unknown Country", fallback_year, reference_showing_duration, "Unknown Director"]
         elif len(meta) == 3:
             if is_parseable_as_int(meta[0]):
                 logger.warning("Detected missing country - filling with unknown")
@@ -102,7 +103,7 @@ def _get_metadata(meta_source, reference_showing) -> List[str]:
                         meta[2]]  # director
         else:
             logger.warning("... Missing too much of metadata")
-            meta = ["Unknown Country", fallback_year, "Unknown Duration", "Unknown Director"]
+            meta = ["Unknown Country", fallback_year, reference_showing_duration, "Unknown Director"]
         logger.warning(f"Corrected metadata: {meta}")
     return meta
 
