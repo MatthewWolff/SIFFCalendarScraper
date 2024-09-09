@@ -5,4 +5,4 @@ echo '>> fetching changes'
 git fetch --all && git rebase origin/main --autostash && git push -u -f origin $(git_current_branch)
 
 echo '>>>>>>>> RUNNING SCRAPER >>>>>>>>'
-./runner 
+./runner 2>&1 | tee -a /home/matthew/calendar.error.log
