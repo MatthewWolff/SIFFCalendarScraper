@@ -114,6 +114,22 @@ def update_calendar(calendar_id: GoogleCalendar, theatre: SIFFTheatre):
             logger.info(f"Event created at {theatre} - {event['summary']}, {event['start']['dateTime']}"
                         f"- {response.get('htmlLink')}")
 
+    deactivate_reminders(calendar_id, service)
+
+
+def deactivate_reminders(calendar_id: GoogleCalendar, service=None):
+    """
+    The API can mess up sometimes and add reminders. Iterate through events to flag them and remove reminders
+    """
+    if not service:
+        service = build('calendar', 'v3', credentials=_get_credentials())
+    for event in get_calendar_events(service, calendar_id, future_only=True):
+        if event['reminders'].get("overrides", list()):
+            event_info = f"{get_calendar_name(calendar_id)} - {event['start']['dateTime']} - {event['summary']}"
+            logger.warning(f"Deactivate event with reminders: {event_info}")
+            event['reminders'] = {"useDefault": False}
+            service.events().update(calendarId=calendar_id, eventId=event['id'], body=event).execute()
+
 
 def wipe_calendar(calendar_id: GoogleCalendar, future_only=False):
     api_credentials = _get_credentials()
