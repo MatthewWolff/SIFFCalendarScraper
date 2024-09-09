@@ -6,3 +6,4 @@ git fetch --all && git rebase origin/main --autostash && git push -u -f origin $
 
 echo '>>>>>>>> RUNNING SCRAPER >>>>>>>>'
 ./runner 2>&1 | tee -a /home/matthew/calendar.error.log
+echo 'done!'
