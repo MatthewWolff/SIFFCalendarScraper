@@ -22,6 +22,10 @@ class TestSIFFScraper(unittest.TestCase):
         metadata = _get_metadata(self.test_files["meta"]["complete.html"], self.reference_showing)
         self.assertEqual(metadata, ["USA", "2023", "107 min.", "Greg Kwedar"])
 
+    def test_get_metadata_missing_year(self):
+        metadata = _get_metadata(self.test_files["meta"]["missing_year.html"], self.reference_showing)
+        self.assertEqual(metadata, ["United Kingdom", f"{self.current_year}*", "125 min.", "Justin Martin"])
+
     def test_get_metadata_empty(self):
         metadata = _get_metadata(self.test_files["meta"]["empty.html"], self.reference_showing)
         self.assertEqual(metadata, ["Unknown Country", f"{self.current_year}*", "106 min.", "Unknown Director"])
