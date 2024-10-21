@@ -87,9 +87,30 @@ def _create_event(movie: MovieShowing) -> Dict:
     }
 
 
+def _list_events(service, calendar_id: GoogleCalendar) -> list:
+    events_list, page_token = list(), None
+    while True:
+        logger.debug(f"Executing Google API listEvents query with token: {page_token}")
+        events_result = service.events().list(
+            calendarId=calendar_id,
+            pageToken=page_token,
+            maxResults=2500,  # Maximum allowed per request
+            singleEvents=True,
+            orderBy='startTime'
+        ).execute()
+        events = events_result.get('items', [])
+        events_list.extend(events)
+
+        page_token = events_result.get('nextPageToken', False)
+        if not page_token:
+            break
+
+    return events_list
+
+
 def get_calendar_events(service, calendar_id: GoogleCalendar, future_only=False) -> list:
     logger.debug(f"Retrieving existing events from Google Calendar - {get_calendar_name(calendar_id)}")
-    events = service.events().list(calendarId=calendar_id).execute().get('items', list())
+    events = _list_events(service, calendar_id)
     logger.info(f"Found {len(events)} existing events on calendar - {get_calendar_name(calendar_id)}")
     logger.debug(f"Filtering calendar events for future: {future_only}")
 
@@ -100,6 +121,22 @@ def get_calendar_events(service, calendar_id: GoogleCalendar, future_only=False)
     if future_only:
         logger.info(f"Found {len(filtered_events)} future events on calendar - {get_calendar_name(calendar_id)}")
     return filtered_events
+
+
+def _remove_duplicate_events(calendar_id: GoogleCalendar):
+    api_credentials = _get_credentials()
+    service = build('calendar', 'v3', credentials=api_credentials)
+
+    existing, duplicates = set(), 0
+    for event in get_calendar_events(service, calendar_id):
+        movie = _extract_movie(event)
+        if movie in existing:
+            service.events().delete(calendarId=calendar_id, eventId=event['id']).execute()
+            logger.info("Deleting duplicate")
+            duplicates += 1
+        else:
+            existing.add(movie)
+    logger.info(f"Deleted {duplicates} duplicates")
 
 
 def update_calendar(calendar_id: GoogleCalendar, theatre: SIFFTheatre):
